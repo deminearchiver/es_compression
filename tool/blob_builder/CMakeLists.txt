@@ -79,6 +79,7 @@
 #    <Menu: Product -> Build For -> Running>
 #
 #  Android
+#     Android 64-bit ARM (arm64-v8a)
 #     >mkdir build && cd build
 #     >cmake .. -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=arm64-v8a -DANDROID_PLATFORM=android-21 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_BUILD_TYPE=Release
 #     >make
