@@ -77,6 +77,30 @@
 #    <open xcode>
 #    <switch to ALL_BUILD target>
 #    <Menu: Product -> Build For -> Running>
+#
+#  Android
+#     Android 64-bit ARM (arm64-v8a)
+#     >mkdir build && cd build
+#     >cmake .. -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=arm64-v8a -DANDROID_PLATFORM=android-21 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_BUILD_TYPE=Release
+#     >make
+#
+#     Android 32-bit ARM (armeabi-v7a)
+#     >mkdir build && cd build
+#     >cmake .. -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=armeabi-v7a -DANDROID_PLATFORM=android-21 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_BUILD_TYPE=Release
+#     >make
+#
+#     Android x86_64
+#     >mkdir build && cd build
+#     >cmake .. -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=x86_64 -DANDROID_PLATFORM=android-21 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_BUILD_TYPE=Release
+#     >make
+#
+#     Android x86
+#     >mkdir build && cd build
+#     >cmake .. -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=x86 -DANDROID_PLATFORM=android-21 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_BUILD_TYPE=Release
+#     >make
+#
+#     Note: Ensure ANDROID_NDK_HOME environment variable points to your Android NDK installation
+#     The build automatically includes support for 16KB page size when targeting Android platforms
 #*******************************************************************************/
 cmake_minimum_required(VERSION 3.14)
 project(es_compression_blobs)
@@ -227,6 +251,17 @@ if (CMAKE_COMPILER_IS_GNUCC)
             set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -m32")
         endif ()
     endif ()
+endif ()
+
+#------------------------------------------------------------------
+# Android Settings
+#------------------------------------------------------------------
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Android")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-z,max-page-size=16384")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-z,max-page-size=16384")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-z,max-page-size=16384")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-z,max-page-size=16384")
+    message(STATUS "Android 16KB page size support enabled")
 endif ()
 
 #------------------------------------------------------------------
