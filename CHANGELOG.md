@@ -1,3 +1,7 @@
+## 2.0.15
+
+- Add android 16kb page size compile flags, android build instructions contributed by [ice-orion](https://github.com/ice-orion). [#55](https://github.com/instantiations/es_compression/issues/55)
+
 ## 2.0.14
 
 - Added Android deployment instructions to the [README](README.md) based on great contribution from [nightmarefsm](https://github.com/nightmarefsm). [#54](https://github.com/instantiations/es_compression/issues/54)
@@ -181,3 +185,4 @@ and `CodecBuffer.resetWrite()`.
 - Implemented version objects for each codec that allow the user to easily see what library was bound to.
 - Implemented tests for [escompress](bin/es_compress.dart), [examples](example) and [benchmarks](benchmark).
 - Produced initial [design doc](doc/design_doc.md) and experience report.
+
