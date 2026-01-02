@@ -12,14 +12,14 @@ executables:
   escompress: es_compress
 
 dependencies:
-  args: ^2.5.0
-  ffi: ^2.1.2
+  args: ^2.7.0
+  ffi: ^2.1.4
   lz4_ffi: ^1.0.0-dev.2
-  stack_trace: ^1.11.1
-  stream_channel: ^2.1.2
+  stack_trace: ^1.12.1
+  stream_channel: ^2.1.4
 
 dev_dependencies:
-  benchmark_harness: ^2.2.2
-  collection: ^1.19.0
-  lints: ^5.1.1
-  test: ^1.25.7
+  benchmark_harness: ^2.4.0
+  collection: ^1.19.1
+  lints: ^6.0.0
+  test: ^1.28.0
