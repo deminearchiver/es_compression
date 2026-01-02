@@ -2,8 +2,10 @@
 // file for details. All rights reserved. Use of this source code is governed by
 // a BSD-style license that can be found in the LICENSE file.
 
+// ignore: implementation_imports
+import 'package:lz4_ffi/src/ffi_bindings.dart' as fb;
+
 import '../../lz4.dart';
-import 'ffi/constants.dart';
 
 /// Exposes Lz4 options for input parameters.
 abstract class Lz4Option {
@@ -18,17 +20,17 @@ abstract class Lz4Option {
 
   /// Default max block size for [Lz4Codec.blockSize] and
   /// [Lz4Encoder.blockSize].
-  static const int defaultBlockSize = Lz4Constants.LZ4F_default;
+  static final int defaultBlockSize = fb.LZ4F_blockSizeID_t.LZ4F_default.value;
 
   /// 64KB max block size for [Lz4Codec.blockSize] and [Lz4Encoder.blockSize].
-  static const int blockSize64KB = Lz4Constants.LZ4F_max64KB;
+  static final int blockSize64KB = fb.LZ4F_blockSizeID_t.LZ4F_max64KB.value;
 
   /// 256KB max block size for [Lz4Codec.blockSize] and [Lz4Encoder.blockSize].
-  static const int blockSize256KB = Lz4Constants.LZ4F_max256KB;
+  static final int blockSize256KB = fb.LZ4F_blockSizeID_t.LZ4F_max256KB.value;
 
   /// 1MB max block size for [Lz4Codec.blockSize] and [Lz4Encoder.blockSize].
-  static const int blockSize1MB = Lz4Constants.LZ4F_max1MB;
+  static final int blockSize1MB = fb.LZ4F_blockSizeID_t.LZ4F_max1MB.value;
 
   /// 4MB max block size for [Lz4Codec.blockSize] and [Lz4Encoder.blockSize].
-  static const int blockSize4MB = Lz4Constants.LZ4F_max4MB;
+  static final int blockSize4MB = fb.LZ4F_blockSizeID_t.LZ4F_max4MB.value;
 }

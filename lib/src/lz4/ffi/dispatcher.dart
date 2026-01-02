@@ -6,9 +6,10 @@ import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
 
-import 'constants.dart';
+// ignore: implementation_imports
+import 'package:lz4_ffi/src/ffi_bindings.dart' as fb;
+
 import 'library.dart';
-import 'types.dart';
 
 // ignore_for_file: public_member_api_docs
 
@@ -64,28 +65,32 @@ class Lz4Dispatcher with Lz4DispatchErrorCheckerMixin {
   Pointer<Utf8> callLz4FGetErrorName(int code) =>
       library.lz4FGetErrorName(code);
 
-  Pointer<Lz4Cctx> callLz4FCreateCompressionContext(
-      {int version = Lz4Constants.LZ4F_VERSION}) {
-    final newCtxPtr = malloc<Pointer<Lz4Cctx>>();
+  Pointer<fb.LZ4F_cctx> callLz4FCreateCompressionContext(
+      {int version = fb.LZ4F_VERSION}) {
+    final newCtxPtr = malloc<Pointer<fb.LZ4F_cctx>>();
     checkError(library.lz4FCreateCompressionContext(newCtxPtr, version));
     final newCtx = newCtxPtr[0];
     malloc.free(newCtxPtr);
     return newCtx;
   }
 
-  int callLz4FFreeCompressionContext(Pointer<Lz4Cctx> context) =>
+  int callLz4FFreeCompressionContext(Pointer<fb.LZ4F_cctx> context) =>
       checkError(library.lz4FFreeCompressionContext(context));
 
-  int callLz4FCompressBegin(Pointer<Lz4Cctx> context, Pointer<Uint8> destBuffer,
-          int destSize, Pointer<Lz4Preferences> preferences) =>
+  int callLz4FCompressBegin(
+          Pointer<fb.LZ4F_cctx> context,
+          Pointer<Uint8> destBuffer,
+          int destSize,
+          Pointer<fb.LZ4F_preferences_t> preferences) =>
       checkError(library.lz4FCompressBegin(
           context, destBuffer, destSize, preferences));
 
-  int callLz4FCompressBound(int srcSize, Pointer<Lz4Preferences> preferences) =>
+  int callLz4FCompressBound(
+          int srcSize, Pointer<fb.LZ4F_preferences_t> preferences) =>
       checkError(library.lz4FCompressBound(srcSize, preferences));
 
   int callLz4FCompressFrameBound(
-          int srcSize, Pointer<Lz4Preferences> preferences) =>
+          int srcSize, Pointer<fb.LZ4F_preferences_t> preferences) =>
       checkError(library.lz4FCompressFrameBound(srcSize, preferences));
 
   int callLz4CompressFrame(
@@ -93,44 +98,47 @@ class Lz4Dispatcher with Lz4DispatchErrorCheckerMixin {
           int dstCapacity,
           Pointer<Uint8> srcBuffer,
           int srcSize,
-          Pointer<Lz4Preferences> preferences) =>
+          Pointer<fb.LZ4F_preferences_t> preferences) =>
       checkError(library.lz4FCompressFrame(
           dstBuffer, dstCapacity, srcBuffer, srcSize, preferences));
 
   int callLz4FCompressUpdate(
-          Pointer<Lz4Cctx> context,
+          Pointer<fb.LZ4F_cctx> context,
           Pointer<Uint8> destBuffer,
           int destSize,
           Pointer<Uint8> srcBuffer,
           int srcSize,
-          Pointer<Lz4CompressOptions> options) =>
+          Pointer<fb.LZ4F_compressOptions_t> options) =>
       checkError(library.lz4FCompressUpdate(
           context, destBuffer, destSize, srcBuffer, srcSize, options));
 
-  int callLz4FFlush(Pointer<Lz4Cctx> context, Pointer<Uint8> destBuffer,
-          int destSize, Pointer<Lz4CompressOptions> options) =>
+  int callLz4FFlush(Pointer<fb.LZ4F_cctx> context, Pointer<Uint8> destBuffer,
+          int destSize, Pointer<fb.LZ4F_compressOptions_t> options) =>
       checkError(library.lz4FFlush(context, destBuffer, destSize, options));
 
-  int callLz4FCompressEnd(Pointer<Lz4Cctx> context, Pointer<Uint8> destBuffer,
-          int destSize, Pointer<Lz4CompressOptions> options) =>
+  int callLz4FCompressEnd(
+          Pointer<fb.LZ4F_cctx> context,
+          Pointer<Uint8> destBuffer,
+          int destSize,
+          Pointer<fb.LZ4F_compressOptions_t> options) =>
       checkError(
           library.lz4FCompressEnd(context, destBuffer, destSize, options));
 
-  Pointer<Lz4Dctx> callLz4FCreateDecompressionContext(
-      {int version = Lz4Constants.LZ4F_VERSION}) {
-    final newCtxPtr = malloc<Pointer<Lz4Dctx>>();
+  Pointer<fb.LZ4F_dctx> callLz4FCreateDecompressionContext(
+      {int version = fb.LZ4F_VERSION}) {
+    final newCtxPtr = malloc<Pointer<fb.LZ4F_dctx>>();
     checkError(library.lz4FCreateDecompressionContext(newCtxPtr, version));
     final newCtx = newCtxPtr[0];
     malloc.free(newCtxPtr);
     return newCtx;
   }
 
-  int callLz4FFreeDecompressionContext(Pointer<Lz4Dctx> context) =>
+  int callLz4FFreeDecompressionContext(Pointer<fb.LZ4F_dctx> context) =>
       checkError(library.lz4FFreeDecompressionContext(context));
 
-  List<dynamic> callLz4FGetFrameInfo(
-      Pointer<Lz4Dctx> context, Pointer<Uint8> srcBuffer, int compressedSize) {
-    final frameInfo = library.newFrameInfo();
+  List<dynamic> callLz4FGetFrameInfo(Pointer<fb.LZ4F_dctx> context,
+      Pointer<Uint8> srcBuffer, int compressedSize) {
+    final frameInfo = malloc<fb.LZ4F_frameInfo_t>();
     final sizePtr = malloc<IntPtr>();
     sizePtr.value = compressedSize;
     final result = checkError(
@@ -140,16 +148,16 @@ class Lz4Dispatcher with Lz4DispatchErrorCheckerMixin {
     return <dynamic>[result, frameInfo, read];
   }
 
-  void callLz4FResetDecompressionContext(Pointer<Lz4Dctx> context) =>
+  void callLz4FResetDecompressionContext(Pointer<fb.LZ4F_dctx> context) =>
       library.lz4FResetDecompressionContext(context);
 
   List<int> callLz4FDecompress(
-      Pointer<Lz4Dctx> context,
+      Pointer<fb.LZ4F_dctx> context,
       Pointer<Uint8> destBuffer,
       int destSize,
       Pointer<Uint8> srcBuffer,
       int srcSize,
-      Pointer<Lz4DecompressOptions> options) {
+      Pointer<fb.LZ4F_decompressOptions_t> options) {
     _destSizePtr.value = destSize;
     _srcSizePtr.value = srcSize;
     final hint = checkError(library.lz4FDecompress(

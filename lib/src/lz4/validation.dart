@@ -13,7 +13,7 @@ void validateLz4Level(int level) {
 
 /// Validate the block size is a known block size.
 void validateLz4BlockSize(int blockSize) {
-  const blockSizes = [
+  final blockSizes = <int>[
     Lz4Option.defaultBlockSize,
     Lz4Option.blockSize64KB,
     Lz4Option.blockSize256KB,

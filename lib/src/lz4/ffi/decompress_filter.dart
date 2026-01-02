@@ -7,11 +7,13 @@ import 'dart:math';
 
 import 'package:ffi/ffi.dart';
 
+// ignore: implementation_imports
+import 'package:lz4_ffi/src/ffi_bindings.dart' as fb;
+
 import '../../../framework.dart';
 import '../../../lz4.dart';
 import '../../framework/native/buffers.dart';
 import '../../framework/native/filters.dart';
-import 'constants.dart';
 import 'dispatcher.dart';
 import 'types.dart';
 
@@ -22,13 +24,13 @@ class Lz4DecompressFilter extends NativeCodecFilterBase {
   final Lz4Dispatcher _dispatcher = Lz4Dispatcher();
 
   /// Native lz4 frame info.
-  Pointer<Lz4FrameInfo>? _frameInfo;
+  Pointer<fb.LZ4F_frameInfo_t>? _frameInfo;
 
   /// Native lz4 context.
-  Pointer<Lz4Dctx>? _context;
+  Pointer<fb.LZ4F_dctx>? _context;
 
   /// Native lz4 decompress options.
-  late final Pointer<Lz4DecompressOptions> _options;
+  late final Pointer<fb.LZ4F_decompressOptions_t> _options;
 
   /// Construct the [Lz4DecompressFilter] with the defined buffer lengths.
   Lz4DecompressFilter(int inputBufferLength, int outputBufferLength)
@@ -59,7 +61,7 @@ class Lz4DecompressFilter extends NativeCodecFilterBase {
     _initContext();
 
     inputBufferHolder.length = inputBufferHolder.isLengthSet()
-        ? max(inputBufferHolder.length, Lz4Constants.LZ4F_HEADER_SIZE_MAX)
+        ? max(inputBufferHolder.length, fb.LZ4F_HEADER_SIZE_MAX)
         : lz4DecoderInputBufferLength;
 
     final numBytes = inputBufferHolder.buffer.nextPutAll(bytes, start, end);
@@ -68,7 +70,7 @@ class Lz4DecompressFilter extends NativeCodecFilterBase {
     const defaultBlockSize = 65536;
 
     outputBufferHolder.length = max(
-        _frameInfo?.ref.blockSize ?? defaultBlockSize,
+        _frameInfo?.ref.blockSizeID.size ?? defaultBlockSize,
         outputBufferHolder.isLengthSet()
             ? outputBufferHolder.length
             : max(lz4DecoderOutputBufferLength, inputBufferHolder.length));
@@ -116,7 +118,7 @@ class Lz4DecompressFilter extends NativeCodecFilterBase {
   /// is [:null:].
   ///
   /// Return the null-checked [_context].
-  Pointer<Lz4Dctx> _checkedContext() {
+  Pointer<fb.LZ4F_dctx> _checkedContext() {
     if (_context == null) throw StateError('null _context is unexpected');
     return _context!;
   }
@@ -125,7 +127,7 @@ class Lz4DecompressFilter extends NativeCodecFilterBase {
   int _readFrameInfo(NativeCodecBuffer encoderBuffer, {bool reset = false}) {
     final result = _dispatcher.callLz4FGetFrameInfo(
         _checkedContext(), encoderBuffer.readPtr, encoderBuffer.unreadCount);
-    _frameInfo = result[1] as Pointer<Lz4FrameInfo>;
+    _frameInfo = result[1] as Pointer<fb.LZ4F_frameInfo_t>;
     final read = result[2] as int;
     encoderBuffer.incrementBytesRead(read);
     if (reset == true) _reset();

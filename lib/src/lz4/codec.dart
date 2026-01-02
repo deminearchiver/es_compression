@@ -86,16 +86,17 @@ class Lz4Codec extends Codec<List<int>, List<int>> {
       this.contentChecksum = false,
       this.blockChecksum = false,
       this.blockLinked = true,
-      this.blockSize = Lz4Option.defaultBlockSize,
+      int? blockSize,
       this.optimizeForDecompression = false,
       this.inputBufferLength = CodecBufferHolder.autoLength,
-      this.outputBufferLength = CodecBufferHolder.autoLength}) {
+      this.outputBufferLength = CodecBufferHolder.autoLength})
+      : blockSize = blockSize ?? Lz4Option.defaultBlockSize {
     validateLz4Level(level);
-    validateLz4BlockSize(blockSize);
+    validateLz4BlockSize(this.blockSize);
   }
 
   /// Internal Constructor for building the [lz4] instance.
-  const Lz4Codec._default()
+  Lz4Codec._default()
       : level = Lz4Option.defaultLevel,
         fastAcceleration = false,
         contentChecksum = false,
@@ -116,4 +117,4 @@ class Lz4Codec extends Codec<List<int>, List<int>> {
 }
 
 /// An instance of the default implementation of the [Lz4Codec].
-const Lz4Codec lz4 = Lz4Codec._default();
+final Lz4Codec lz4 = Lz4Codec._default();

@@ -8,20 +8,6 @@ import '../codec.dart';
 import '../decoder.dart';
 import '../encoder.dart';
 import 'dispatcher.dart';
-import 'library.dart';
-
-/// Library function used by [Lz4Codec] static function that gets the custom
-/// library path.
-///
-/// Return the [String] library path or [:null:] if none is set.
-String? lz4GetLibraryPath() => Lz4Library.userDefinedLibraryPath;
-
-/// Library function used by [Lz4Codec] static function that sets a custom
-/// library path.
-///
-/// This forwards the request to the [Lz4Library].
-void lz4SetLibraryPath(String? path) =>
-    Lz4Library.userDefinedLibraryPath = path;
 
 /// Extension that provides the `dart:io` dependent part of [Lz4Codec],
 /// specifically FFI.
@@ -33,10 +19,6 @@ void lz4SetLibraryPath(String? path) =>
 extension Lz4CodecFFI on Lz4Codec {
   /// Return the Lz4 version number.
   int get libraryVersionNumber => Lz4Dispatcher.versionNumber;
-
-  /// Set the user override library path by forwarding to [Lz4Library].
-  set userDefinedLibraryPath(String libraryPath) =>
-      Lz4Library.userDefinedLibraryPath = libraryPath;
 
   /// Return a [Lz4Encoder] configured with the relevant encoding parameters.
   Converter<List<int>, List<int>> get encoderImpl => Lz4Encoder(

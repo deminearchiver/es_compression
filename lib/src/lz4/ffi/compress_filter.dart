@@ -7,13 +7,14 @@ import 'dart:math';
 
 import 'package:ffi/ffi.dart';
 
+// ignore: implementation_imports
+import 'package:lz4_ffi/src/ffi_bindings.dart' as fb;
+
 import '../../../framework.dart';
 import '../../framework/native/buffers.dart';
 import '../../framework/native/filters.dart';
 import '../encoder.dart';
-import 'constants.dart';
 import 'dispatcher.dart';
-import 'types.dart';
 
 /// A [Lz4CompressFilter] is an FFI-based [CodecFilter] that implements the
 /// lz4 compression algorithm.
@@ -22,13 +23,13 @@ class Lz4CompressFilter extends NativeCodecFilterBase {
   final Lz4Dispatcher _dispatcher = Lz4Dispatcher();
 
   /// FFI Struct exposed by lz4 shared lib for configuration.
-  late final Pointer<Lz4Preferences> _preferences;
+  late final Pointer<fb.LZ4F_preferences_t> _preferences;
 
   /// Native lz4 context.
-  late final Pointer<Lz4Cctx> _context;
+  late final Pointer<fb.LZ4F_cctx> _context;
 
   /// Native lz4 compress options.
-  late final Pointer<Lz4CompressOptions> _options;
+  late final Pointer<fb.LZ4F_compressOptions_t> _options;
 
   /// Construct the [Lz4CompressFilter] with the optional parameters.
   Lz4CompressFilter(
@@ -125,7 +126,7 @@ class Lz4CompressFilter extends NativeCodecFilterBase {
   int doFinalize(NativeCodecBuffer outputBuffer) {
     final writeLength = outputBuffer.unwrittenCount;
     if (writeLength < 4 ||
-        (_preferences.ref.frameInfoContentChecksumFlag != 0 &&
+        (_preferences.ref.frameInfo.contentChecksumFlagAsInt != 0 &&
             writeLength < 8)) {
       const FormatException(
           'buffer capacity is too small to properly finish the lz4 frame');
@@ -160,9 +161,9 @@ class Lz4CompressFilter extends NativeCodecFilterBase {
   /// A [FormatException] is thrown if the lz4 frame header could not be
   /// written.
   void _writeHeader(NativeCodecBuffer outputBuffer) {
-    if (outputBuffer.unwrittenCount < Lz4Constants.LZ4F_HEADER_SIZE_MAX) {
-      FormatException('buffer capacity < LZ4F_HEADER_SIZE_MAX '
-          '($Lz4Constants.LZ4F_HEADER_SIZE_MAX bytes)');
+    if (outputBuffer.unwrittenCount < fb.LZ4F_HEADER_SIZE_MAX) {
+      const FormatException('buffer capacity < LZ4F_HEADER_SIZE_MAX '
+          '(${fb.LZ4F_HEADER_SIZE_MAX} bytes)');
     }
     final numBytes = _dispatcher.callLz4FCompressBegin(_context,
         outputBuffer.writePtr, outputBuffer.unwrittenCount, _preferences);

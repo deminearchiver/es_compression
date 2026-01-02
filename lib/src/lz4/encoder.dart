@@ -69,12 +69,13 @@ class Lz4Encoder extends CodecConverter {
       this.contentChecksum = false,
       this.blockChecksum = false,
       this.blockLinked = true,
-      this.blockSize = Lz4Option.defaultBlockSize,
+      int? blockSize,
       this.optimizeForDecompression = false,
       this.inputBufferLength = lz4EncoderInputBufferLength,
-      this.outputBufferLength = lz4EncoderOutputBufferLength}) {
+      this.outputBufferLength = lz4EncoderOutputBufferLength})
+      : blockSize = blockSize ?? Lz4Option.defaultBlockSize {
     validateLz4Level(level);
-    validateLz4BlockSize(blockSize);
+    validateLz4BlockSize(this.blockSize);
   }
 
   /// Start a chunked conversion using the options given to the [Lz4Encoder]
