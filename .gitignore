@@ -21,3 +21,7 @@ doc/api/
 
 # VAST Platform Common Repo
 tool/blob_builder/common/
+
+# Attributes from this file will override those from pubspec.yaml; see
+# https://dart.dev/tools/pub/dependencies#pubspec-overrides
+pubspec_overrides.yaml
